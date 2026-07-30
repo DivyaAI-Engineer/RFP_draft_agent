@@ -1,0 +1,41 @@
+name: CD
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  IMAGE_NAME: mobility-rfp-agent
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push image
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          registryUrl: ${{ vars.ACR_LOGIN_SERVER }}
+          registryUsername: ${{ secrets.ACR_USERNAME }}
+          registryPassword: ${{ secrets.ACR_PASSWORD }}
+          imageToBuild: ${{ vars.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          dockerfilePath: ./docker/Dockerfile
+          containerAppName: ${{ vars.AZURE_CONTAINERAPPS_APP }}
+          resourceGroup: ${{ vars.AZURE_RESOURCE_GROUP }}
+          environment: ${{ vars.AZURE_CONTAINERAPPS_ENV }}
+          targetPort: 8000
+          ingress: external
