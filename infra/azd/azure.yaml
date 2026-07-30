@@ -1,0 +1,11 @@
+name: draft_proposal_agent
+metadata:
+  template: custom
+services:
+  api:
+    project: ../../
+    language: python
+    host: containerapp
+    docker:
+      path: docker/Dockerfile
+      context: .
