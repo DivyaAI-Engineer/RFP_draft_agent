@@ -4,7 +4,7 @@ from typing import Dict, List
 class RFPParser:
     """
     Very simple RFP parser stub.
-    In a real system, you’d use LLM-assisted extraction or Prompt Flow.
+    In a real system, LLM-assisted extraction or Prompt Flow is used
     """
 
     def parse(self, rfp_text: str) -> Dict:
